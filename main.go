@@ -1,6 +1,14 @@
 package main
 
+import (
+	"net/http"
+
+	"github.com/BartekDe/devops-thang/handlers"
+)
+
 func main() {
-	const version = "0.0.1"
-	println(version)
+	http.HandleFunc("/version", handlers.VersionHandler)
+	http.HandleFunc("/temperature", handlers.TemperatureHandler)
+
+	http.ListenAndServe(":8080", nil)
 }
