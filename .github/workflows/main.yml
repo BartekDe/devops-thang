@@ -34,21 +34,8 @@ jobs:
       uses: hadolint/hadolint-action@v3.1.0
       with:
         dockerfile: ./Dockerfile
-      
-    - name: Build docker image with buildx
-      uses: docker/setup-buildx-action@v3
-    
-    - name: Cache Docker layers
-      uses: actions/cache@v4
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
     
     - name: Build Docker image
       run: |
-        docker build --cache-from=type=local,src=/tmp/.buildx-cache \
-                    --cache-to=type=local,dest=/tmp/.buildx-cache,mode=max \
-                    -t my-app:ci .
+        docker build -t my-app:ci .
 
