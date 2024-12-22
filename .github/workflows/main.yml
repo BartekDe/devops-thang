@@ -13,16 +13,42 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
         go-version: ${{ matrix.go-version }}
+
     - name: Install dependencies
       run: go get .
-    - name: Build
-      run: go build -v ./...
+
+    - name: Go vet checks
+      run: go vet ./...
+
     - name: Test
       env:
         API_KEY: ${{ secrets.API_KEY }}
       run: go test -v ./...
+
+    - name: Hadolint
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: ./Dockerfile
+      
+    - name: Build docker image with buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Cache Docker layers
+      uses: actions/cache@v4
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+    
+    - name: Build Docker image
+      run: |
+        docker build --cache-from=type=local,src=/tmp/.buildx-cache \
+                    --cache-to=type=local,dest=/tmp/.buildx-cache,mode=max \
+                    -t my-app:ci .
 
