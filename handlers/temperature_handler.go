@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-
-	"github.com/joho/godotenv"
 )
 
 type WeatherData struct {
@@ -66,12 +64,8 @@ func getTemperature(loc string) (float64, error) {
 }
 
 func getApiKey() (string, error) {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		return "", err
-	}
-
 	apiKey := os.Getenv("API_KEY")
+	fmt.Println("api key: " + apiKey)
 	if len(apiKey) == 0 {
 		return "", errors.New("API_KEY is not set")
 	}
