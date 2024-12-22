@@ -14,6 +14,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: OSSF Scorecard action
+      uses: ossf/scorecard-action@v2.4.0
+      with:
+        results_file: ossf_results.sarif
+        results_format: sarif
+        publish_results: true
+
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
